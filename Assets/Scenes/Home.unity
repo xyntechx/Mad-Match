@@ -321,6 +321,7 @@ GameObject:
   - component: {fileID: 690951923}
   - component: {fileID: 690951922}
   - component: {fileID: 690951921}
+  - component: {fileID: 690951924}
   m_Layer: 5
   m_Name: PlayBtn
   m_TagString: Untagged
@@ -430,6 +431,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 690951919}
   m_CullTransparentMesh: 1
+--- !u!114 &690951924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690951919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cdfb34b978ab4f3cb2cddf42992dc87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 690951921}
 --- !u!1 &773720065
 GameObject:
   m_ObjectHideFlags: 0
@@ -442,6 +456,7 @@ GameObject:
   - component: {fileID: 773720069}
   - component: {fileID: 773720068}
   - component: {fileID: 773720067}
+  - component: {fileID: 773720070}
   m_Layer: 5
   m_Name: LeaderboardBtn
   m_TagString: Untagged
@@ -551,6 +566,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 773720065}
   m_CullTransparentMesh: 1
+--- !u!114 &773720070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773720065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cdfb34b978ab4f3cb2cddf42992dc87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 773720067}
 --- !u!1 &1485984082
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,6 +991,7 @@ GameObject:
   - component: {fileID: 2037778233}
   - component: {fileID: 2037778232}
   - component: {fileID: 2037778231}
+  - component: {fileID: 2037778234}
   m_Layer: 5
   m_Name: HowToPlayBtn
   m_TagString: Untagged
@@ -1072,3 +1101,16 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2037778229}
   m_CullTransparentMesh: 1
+--- !u!114 &2037778234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2037778229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cdfb34b978ab4f3cb2cddf42992dc87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 2037778231}
