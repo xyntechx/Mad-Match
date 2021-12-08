@@ -19,19 +19,19 @@ public class LevelSelect : MonoBehaviour
         switch (this.name)
         {
             case "Lvl1Btn":
-                SceneManager.LoadSceneAsync(7);
-                break;
-            case "Lvl2Btn":
                 SceneManager.LoadSceneAsync(4);
                 break;
-            case "Lvl3Btn":
-                SceneManager.LoadSceneAsync(8);
+            case "Lvl2Btn":
+                SceneManager.LoadSceneAsync(5);
                 break;
-            case "Lvl4Btn":
+            case "Lvl3Btn":
                 SceneManager.LoadSceneAsync(6);
                 break;
+            case "Lvl4Btn":
+                SceneManager.LoadSceneAsync(7);
+                break;
             case "Lvl5Btn":
-                SceneManager.LoadSceneAsync(5);
+                SceneManager.LoadSceneAsync(8);
                 break;
             default:
                 break;

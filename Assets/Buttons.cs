@@ -22,10 +22,10 @@ public class Buttons : MonoBehaviour
                 SceneManager.LoadSceneAsync(1); // LevelSelect Scene
                 break;
             case "HowToPlayBtn":
-                SceneManager.LoadSceneAsync(2); // HowToPlay Scene
+                SceneManager.LoadSceneAsync(3); // HowToPlay Scene
                 break;
             case "LeaderboardBtn":
-                SceneManager.LoadSceneAsync(3); // Leaderboard Scene
+                SceneManager.LoadSceneAsync(9); // Leaderboard Scene
                 break;
             case "BackBtn":
                 SceneManager.LoadSceneAsync(0); // Home Scene
