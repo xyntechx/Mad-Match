@@ -8,12 +8,14 @@ public class LevelManager : MonoBehaviour
 
     public void Awake()
     {
-        if (LevelManager.instance == null) instance = this;
+        if (LevelManager.instance == null) instance = this; // make sure there's only 1 LevelManager
         else Destroy(gameObject);
     }
 
     public void GameOver()
     {
+        // switch to the review scene when the game is completed
+
         UIManager _ui = GetComponent<UIManager>();
         if (_ui != null)
         {
