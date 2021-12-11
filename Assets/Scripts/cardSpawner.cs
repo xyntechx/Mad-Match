@@ -12,6 +12,8 @@ public class cardSpawner : MonoBehaviour
     public List<GameObject> cards; // ALL spawned cards' gameobjects
     public List<string> cards_names; // spawned cards' corresponding names
 
+    int levelSelected; // Selected level (from level select scene)
+
     // game state variables
     int num_cards_flipped = 0; // number of cards flipped
     List<string> flipped_cards_names; // flipped cards' corresponding names
@@ -27,7 +29,7 @@ public class cardSpawner : MonoBehaviour
     clickbanner clicktostart_banner_script;
     GameObject clicktostart_banner_obj;
 
-    // Start is called before the first frame update
+    // Awake is called when the script loads (?) basically before the scene loads (before start) (i think)
     void Awake()
     {
         fronts = Resources.LoadAll<Sprite>("mycard/fronts");
@@ -43,24 +45,6 @@ public class cardSpawner : MonoBehaviour
 
         //print("start: " + fronts.Length);
 
-        int count = 0;
-        bool flag = true;
-        // change x to 5, y to 4 and count == 11
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 2; y++)
-            {
-                num_cards_spawned++;
-                count++;
-                if (count == 4)
-                {
-                    flag = false;
-                    count = 1;
-                }
-                SpawnCard(count, flag, -5f + x*2.5f, -3.8f + y*2.5f);
-            }
-        }
-
         // external scripts
         timer_obj = GameObject.Find("timer");
         timer_script = timer_obj.GetComponent<timer>();
@@ -75,8 +59,77 @@ public class cardSpawner : MonoBehaviour
         //gameover();
     }
 
+    void prep_level()
+    {
+        // TODO: level specific stats should come here, including spawning of cards
+        // Moved the spawning of cards down here...
+
+        levelSelected = (DataController.LevelSelected != 0) ? DataController.LevelSelected : 1; // defaults to 1 if Level Selected is not set
+
+        // initialisation and calculation of variables
+        // tmp values work for 20 card setup (debatable)
+        int count = 0;
+        bool flag = true;
+        int num_pairs = 10; // tmp
+        int rows = 5; // tmp
+        int cols = 4; // tmp
+        float x_offset = -5f; // tmp
+        float y_offset = -3.8f; // tmp
+
+        object[,] level_data = { // not all the values are done yet
+            { // level 1
+                10, 5, 4, -5f, -3.8f
+            },
+            { // level 2
+                10, 5, 4, -5f, -3.8f
+            },
+            { // level 3
+                10, 5, 4, -5f, -3.8f
+            },
+            { // level 4
+                10, 5, 4, -5f, -3.8f
+            },
+            { // level 5
+                10, 5, 4, -5f, -3.8f
+            }
+        };
+
+        num_pairs = (int)level_data[levelSelected - 1, 0];
+        // print(num_pairs);
+
+        // the spawning of cards
+        // change x to 5, y to 4 and count == 11
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
+            {
+                num_cards_spawned++;
+                count++;
+                if (count == num_pairs / 2 + 1)
+                {
+                    flag = false;
+                    count = 1;
+                }
+                SpawnCard(count, flag, x_offset + x*2.5f, y_offset + y*2.5f);
+            }
+        }
+
+        // making cards immobile (unclickable)
+        for (int x = 0; x < cards.Count; x++)
+        {
+            card card_script = cards[x].GetComponent<card>();
+            card_script.set_immobile(true);
+        }
+
+        timer_script.set_time(20f);
+        clicktostart_banner_obj.SetActive(true);
+        GameObject.Find("clickbannertext").SetActive(true);
+        GameObject.Find("timer").SetActive(true);
+    }
+
     void SpawnCard(int card_id, bool picture, float x, float y)
     {
+        /* Makes card gameobjects at the relevant positions*/
         //print("spawncard:" + card_id);
         GameObject c = Instantiate(cardPrefab) as GameObject;
         card card_script = c.GetComponent<card>();
@@ -91,6 +144,8 @@ public class cardSpawner : MonoBehaviour
 
     public void flip_completed(int card_id, bool picture)
     {
+        /* this isn't used anywhere and does not affect the game? */
+
         //print("flip_completed:" + card_id + picture);
         //print(flipped_cards_names.Count);
         string card_name = card_id.ToString() + "_" + (picture ? "image" : "text");
@@ -98,8 +153,14 @@ public class cardSpawner : MonoBehaviour
         flipped_cards_names.Add(card_name);
     }
 
-    void shuffle_cards(int idx1, int idx2, float shuffle_time) // TODO: 3 card adaptation of this
-    { // TODO: add wiggle animation before commencing shuffle
+    void shuffle_cards(int idx1, int idx2, float shuffle_time) 
+    { 
+        /*
+            Swaps the position of card 1 and card 2
+
+            TODO: 3 card adaptation of this
+            TODO: add wiggle animation before commencing shuffle
+        */
         shuffle_time *= 100;
         card card_script1 = cards[idx1].GetComponent<card>();
         card card_script2 = cards[idx2].GetComponent<card>();
@@ -114,6 +175,7 @@ public class cardSpawner : MonoBehaviour
 
     IEnumerator calc_shuffle_cards(int idx1, int idx2, Vector3 pos1to2, Vector3 pos2to1, float shuffle_time)
     {
+        // Actual swapping process
         for (int i = 0; i < shuffle_time; i++)
         {
             yield return new WaitForSeconds(0.01f);
@@ -225,20 +287,6 @@ public class cardSpawner : MonoBehaviour
             num_cards_flipped = 0;
             flipped_cards_names.Clear();
         }
-    }
-
-    void prep_level()
-    {
-        // TODO: level specific stats should come here, including spawning of cards
-        timer_script.set_time(20f);
-        for (int x = 0; x < cards.Count; x++)
-        {
-            card card_script = cards[x].GetComponent<card>();
-            card_script.set_immobile(true);
-        }
-        clicktostart_banner_obj.SetActive(true);
-        GameObject.Find("clickbannertext").SetActive(true);
-        GameObject.Find("timer").SetActive(true);
     }
 
     IEnumerator clicktostart_delay()

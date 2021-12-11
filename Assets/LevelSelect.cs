@@ -19,22 +19,25 @@ public class LevelSelect : MonoBehaviour
         switch (this.name)
         {
             case "Lvl1Btn":
-                SceneManager.LoadSceneAsync(4);
+                DataController.LevelSelected = 1;
                 break;
             case "Lvl2Btn":
-                SceneManager.LoadSceneAsync(5);
+                DataController.LevelSelected = 2;
                 break;
             case "Lvl3Btn":
-                SceneManager.LoadSceneAsync(6);
+                DataController.LevelSelected = 3;
                 break;
             case "Lvl4Btn":
-                SceneManager.LoadSceneAsync(7);
+                DataController.LevelSelected = 4;
                 break;
             case "Lvl5Btn":
-                SceneManager.LoadSceneAsync(8);
+                DataController.LevelSelected = 5;
                 break;
             default:
+                print("Error: Somewhere, somehow, a button has been assigned the wrong script...");
                 break;
         }
+
+        SceneManager.LoadSceneAsync("Game");
     }
 }
