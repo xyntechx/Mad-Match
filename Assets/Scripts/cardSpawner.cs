@@ -42,7 +42,7 @@ public class cardSpawner : MonoBehaviour
 
     void OnEnable()
     {
-        this.lvl_num = (DataController.LevelSelected != 0) ? DataController.LevelSelected : 1;
+        this.lvl_num = (DataController.LevelSelected != 0) ? DataController.LevelSelected : 1; // Level selected defaults to 1 if not set
     }
 
     void Awake()
@@ -203,7 +203,6 @@ public class cardSpawner : MonoBehaviour
     {
         // level specific stats should come here, including spawning of cards
         //print("Preparing level " + lvl_num.ToString());
-
         if (lvl_num == 1)
         {
             timer_script.set_time(20f);
