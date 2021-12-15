@@ -16,7 +16,6 @@ public class card : MonoBehaviour
     public int flip_half;
     public int flip_status;
     public bool flip_started, flip_done;
-    
 
     Sprite my_sprite;
     int my_card_id;

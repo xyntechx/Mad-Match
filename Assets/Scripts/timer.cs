@@ -31,6 +31,11 @@ public class timer : MonoBehaviour
         paused = false;
     }
 
+    public void toggle_pause()
+    {
+        paused = !paused;
+    }
+
     // getter and setter for time
     public float get_time() { 
         return timeLeft;

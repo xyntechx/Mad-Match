@@ -39,6 +39,8 @@ public class cardSpawner : MonoBehaviour
     GameObject timer_obj;
     clickbanner clicktostart_banner_script;
     GameObject clicktostart_banner_obj;
+    Button PauseBtn;
+    pause pause_btn_script;
 
     void OnEnable()
     {
@@ -65,6 +67,18 @@ public class cardSpawner : MonoBehaviour
 
         clicktostart_banner_obj = GameObject.Find("clickbanner");
         clicktostart_banner_script = clicktostart_banner_obj.GetComponent<clickbanner>();
+
+        PauseBtn = GameObject.Find("PauseBtn").GetComponent<Button>();
+        pause_btn_script = PauseBtn.GetComponent<pause>();
+        pause_btn_script.set_immobile(true);
+        PauseBtn.onClick.AddListener(() => 
+        {
+            print(pause_btn_script.immobile);
+            if (!pause_btn_script.immobile)
+            {
+                timer_script.toggle_pause();
+            }
+        });
     }
 
     void Start()
@@ -203,44 +217,63 @@ public class cardSpawner : MonoBehaviour
     {
         // level specific stats should come here, including spawning of cards
         //print("Preparing level " + lvl_num.ToString());
-        if (lvl_num == 1)
-        {
-            timer_script.set_time(20f);
-            int count = 0;
-            bool flag = true;
-            for (int x = 0; x < 3; x++) // 2.5 0 2.5
-            {
-                for (int y = 0; y < 2; y++) // -1.25 1.25
-                {
-                    num_cards_spawned++;
-                    count++;
-                    if (count == 4)
-                    {
-                        flag = false;
-                        count = 1;
-                    }
-                    SpawnCard(count, flag, -2.5f + x * 2.5f, -1.25f + y * 2.5f);
-                }
-            }
+        int rows = 0;
+        int cols = 0;
+        int flag_switch = 0;
+        float x_offset = 0f;
+        float y_offset = 0f;
+
+        // different levels
+        switch (lvl_num) {
+            case 1:
+                cols = 5;
+                rows = 2;
+                flag_switch = 6;
+                x_offset = -5f;
+                y_offset = -1.25f;
+                break;
+            case 2: // a little bit long... can't really fit 7 pairs into neat rows
+                cols = 7;
+                rows = 2;
+                flag_switch = 8;
+                x_offset = -7.5f;
+                y_offset = -1.25f;
+                break;
+            case 3:
+                cols = 6;
+                rows = 3;
+                flag_switch = 10;
+                x_offset = -6.25f;
+                y_offset = -2.6f;
+                break;
+            case 4: // case 4 and 5 are the same (10 pairs)
+            case 5:
+                cols = 5; 
+                rows = 4;
+                flag_switch = 11;
+                x_offset = 1f + -5f; // -5 to 5, interval 2.5, offset 1f because of timer and top left
+                y_offset = -3.8f;
+                break;
+            default:
+                print("Error: An unknown level was built");
+                break;
         }
-        else if (lvl_num >= 2) // TODO: create separate levels
+
+        timer_script.set_time(20f);
+        int count = 0;
+        bool flag = true;
+        for (int x = 0; x < cols; x++)
         {
-            timer_script.set_time(20f);
-            int count = 0;
-            bool flag = true;
-            for (int x = 0; x < 5; x++) // -5 to 5, interval 2.5, offset 1f because of timer and top left
+            for (int y = 0; y < rows; y++)
             {
-                for (int y = 0; y < 4; y++) // -3.8 to 3.7, interval 2.5
+                num_cards_spawned++;
+                count++;
+                if (count == flag_switch)
                 {
-                    num_cards_spawned++;
-                    count++;
-                    if (count == 11)
-                    {
-                        flag = false;
-                        count = 1;
-                    }
-                    SpawnCard(count, flag, 1f + -5f + x * 2.5f, -3.8f + y * 2.5f);
+                    flag = false;
+                    count = 1;
                 }
+                SpawnCard(count, flag, x_offset + x*2.5f, y_offset + y*2.5f);
             }
         }
 
@@ -343,6 +376,7 @@ public class cardSpawner : MonoBehaviour
             gameover_score = (int)Math.Ceiling(timer_script.get_time() * 100);
             timer_script.destroy_addtime();
             timer_obj.SetActive(false);
+            pause_btn_script.set_immobile(false);
 
             gameover();
         }
@@ -410,13 +444,47 @@ public class cardSpawner : MonoBehaviour
     IEnumerator pregame_reveal(int lvl_num)
     {
         // basically our pregame animation, involving revealing the cards (flipping over), pausing for user to memorise, flipping over again and then shuffling
+        // setting up level stats
+        System.Random rnd = new System.Random();
+        int shuffles = 0;
+        int max = 0;
+        float shuffle_time = 0.5f;
+        float memorise_time = 10f;
+
+        switch (lvl_num)
+        {
+            case 1:
+                break;
+            case 2:
+                shuffles = 3;
+                max = 14;
+                break;
+            case 3:
+                shuffles = 5;
+                max = 18;
+                break;
+            case 4:
+                shuffles = 5;
+                max = 20;
+                memorise_time = 5f;
+                break;
+            case 5:
+                shuffles = 7;
+                max = 20;
+                memorise_time = 5f;
+                break;
+            default:
+                print("Error: An unknown level was loaded.");
+                break;
+        }
+
         for (int x = 0; x < cards.Count; x++)
         {
             card card_script = cards[x].GetComponent<card>();
             card_script.ShowFront(false);
             card_script.set_immobile(true);
         }
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(memorise_time); // wait here to let players memorise cards
         for (int x = 0; x < cards.Count; x++)
         {
             card card_script = cards[x].GetComponent<card>();
@@ -426,45 +494,44 @@ public class cardSpawner : MonoBehaviour
         }
         yield return new WaitForSeconds(1f);
         // TODO: each level (those with shuffles) should have some pre-defined shuffles and shuffles randomly generated at runtime
-        if (lvl_num == 1)
+        // So... I'm gonna go ahead and make random shuffles for all levels for now... not sure what this means lol
+        /* Old shuffles in case anyone needs them
+            level 1
+                shuffle_cards(1, 2, 0.5f);
+                yield return new WaitForSeconds(0.5f);
+                shuffle_cards(3, 5, 0.5f);
+            Level 2
+                 shuffle_cards(1, 5, 0.5f);
+                yield return new WaitForSeconds(0.5f);
+                shuffle_cards(16, 10, 0.5f);
+                yield return new WaitForSeconds(0.5f);
+                shuffle_cards(8, 7, 0.5f);
+                yield return new WaitForSeconds(0.5f);
+                shuffle_cards(18, 19, 0.5f);
+                yield return new WaitForSeconds(0.5f);
+        */  
+        
+        for (int x = 0; x < shuffles; x++)
         {
-            shuffle_cards(1, 2, 0.5f);
-            yield return new WaitForSeconds(0.5f);
-            shuffle_cards(3, 5, 0.5f);
-        } else if (lvl_num == 2)
-        {
-            shuffle_cards(1, 5, 0.5f);
-            yield return new WaitForSeconds(0.5f);
-            shuffle_cards(16, 10, 0.5f);
-            yield return new WaitForSeconds(0.5f);
-            shuffle_cards(8, 7, 0.5f);
-            yield return new WaitForSeconds(0.5f);
-            shuffle_cards(18, 19, 0.5f);
-            yield return new WaitForSeconds(0.5f);
-        }
-        else if (lvl_num >= 3) // TODO: change for different levels
-        {
-            System.Random rnd = new System.Random();
-            for (int x = 0; x < 7; x++)
+            int a = rnd.Next(0, max);
+            int b = rnd.Next(0, max);
+            while (b == a)
             {
-                int a = rnd.Next(0, 20);
-                int b = rnd.Next(0, 20);
-                while (b == a)
-                {
-                    b = rnd.Next(0, 20);
-                }
-                shuffle_cards(a, b, 0.5f);
-                yield return new WaitForSeconds(0.6f);
-            }   
+                b = rnd.Next(0, max);
+            }
+            shuffle_cards(a, b, shuffle_time);
+            yield return new WaitForSeconds(0.6f);
         }
 
         yield return new WaitForSeconds(1f);
+
         for (int x = 0; x < cards.Count; x++)
         {
             card card_script = cards[x].GetComponent<card>();
             card_script.set_immobile(false);
         }
         timer_script.resume();
+        pause_btn_script.set_immobile(false);
         game_stage_changing = false;
         game_stage = "ingame";
     }
