@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class card : MonoBehaviour
 {
+    // TODO: TOFIX: bug that prevents the card from spawning face-up.
+    // this is fine for now as we have managed to use work-arounds to avoid needing to spawn them face-up
+    // eg. spawning face down and then playing the flip over animation
+    // ultimately we can just leave this bug if we want to
+
     public Sprite cardFront;
     public Sprite cardBack;
     public bool cardBackIsActive = true;
@@ -11,14 +16,12 @@ public class card : MonoBehaviour
     public int flip_half;
     public int flip_status;
     public bool flip_started, flip_done;
-    
 
     Sprite my_sprite;
     int my_card_id;
     bool my_card_picture;
-    bool immobile = false;
+    bool immobile = false; // controls whether the card will flip when the user clicks on it
 
-    // Start is called before the first frame update
     void Awake()
     {
         flip_timer = 0;
@@ -29,19 +32,6 @@ public class card : MonoBehaviour
         flip_done = true;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void setSprite(Sprite s, int card_id, bool picture)
-    {
-        my_sprite = s;
-        my_card_id = card_id;
-        my_card_picture = picture;
-    }
-
     void OnMouseDown()
     {
         if (!flip_started && flip_done && cardBackIsActive) // prevents user from undoing their click on the card
@@ -50,33 +40,60 @@ public class card : MonoBehaviour
         }
     }
 
-    public void set_immobile(bool flag)
+    public void setSprite(Sprite s, int card_id, bool picture) // called by cardspawner when creating a card object (spawncard and review_next)
     {
+        my_sprite = s;
+        my_card_id = card_id;
+        my_card_picture = picture;
+    }
+
+    public bool set_immobile(bool flag) // returns original value of immobile
+    {
+        bool orig_immobile = immobile;
         immobile = flag;
+        return orig_immobile;
     }
 
-    void StartFlip(bool init = true, bool setDefaultColor = false)
+    public void ShowBack(bool init = false, bool setDefaultColor = true, bool force = false)
     {
-        if (immobile) return;
-        StartCoroutine(CalculateFlip(init, setDefaultColor));
-        flip_started = true;
-        flip_done = false;
-    }
-
-    public void ShowBack(bool init = false, bool setDefaultColor = true)
-    {
+        // init: false when startflip is initiated by start of game revealing animation etc
+        // setting to false prevents flipcomplete (in cardspawner) from being called
+        // setting to true (default) indicates that the card should be flipped back over when more than 2 cards are flipped face up
+        // this may be an undesired behaviour for certain visual tasks
         if (cardBackIsActive == false)
         {
-            StartFlip(init, setDefaultColor);
+            StartFlip(init, setDefaultColor, force);
         }
     }
 
     public void ShowFront(bool init = true)
     {
+        // init: false when startflip is initiated by start of game revealing animation etc
+        // setting to false prevents flipcomplete (in cardspawner) from being called
+        // setting to true (default) indicates that the card should be flipped back over when more than 2 cards are flipped face up
+        // this may be an undesired behaviour for certain visual tasks
         if (cardBackIsActive == true)
         {
             StartFlip(init);
         }
+    }
+
+    public void WrongAnim()
+    {
+        // TODO: prettier wrong animation
+        StartCoroutine(CalculateWrongAnim());
+    }
+
+    void StartFlip(bool init = true, bool setDefaultColor = false, bool force = false)
+    {
+        // init: false when startflip is initiated by start of game revealing animation etc
+        // setting to false prevents flipcomplete (in cardspawner) from being called
+        // setting to true (default) indicates that the card should be flipped back over when more than 2 cards are flipped face up
+        // this may be an undesired behaviour for certain visual tasks
+        if (!force && immobile) return;
+        StartCoroutine(CalculateFlip(init, setDefaultColor));
+        flip_started = true;
+        flip_done = false;
     }
 
     void Flip()
@@ -96,6 +113,10 @@ public class card : MonoBehaviour
 
     IEnumerator CalculateFlip(bool init = true, bool setDefaultColor = false)
     {
+        // init: false when startflip is initiated by start of game revealing animation etc
+        // setting to false prevents flipcomplete (in cardspawner) from being called
+        // setting to true (default) indicates that the card should be flipped back over when more than 2 cards are flipped face up
+        // this may be an undesired behaviour for certain visual tasks
         for (int i = 0; i < 180; i++)
         {
             yield return new WaitForSeconds(0.003f);
@@ -130,13 +151,7 @@ public class card : MonoBehaviour
         
     }
 
-    public void WrongAnim()
-    {
-        // TODO: prettier wrong animation
-        StartCoroutine(CalculateWrongAnim());
-    }
-
-    IEnumerator CalculateWrongAnim()
+    IEnumerator CalculateWrongAnim() // 179 * 0.01f + 180 * 0.003f = 2.33s
     {
         for (int i = 0; i < 200; i++)
         {
@@ -145,7 +160,7 @@ public class card : MonoBehaviour
             gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 0.6f, 0.6f, 1f);
             if (i == 179)
             {
-                ShowBack(false, true);
+                ShowBack(false, true, true);
             }
         }
     }
