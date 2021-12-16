@@ -9,7 +9,7 @@ public class timer : MonoBehaviour
 
     Text text; // the text to show on screen
     float timeLeft;
-    bool paused = true;
+    public bool paused = true;
 
     Queue<GameObject> addtime_objs; // a queue of addtime objects, which are created whenever the user selects a correct pair
 

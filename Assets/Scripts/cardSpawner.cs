@@ -71,12 +71,16 @@ public class cardSpawner : MonoBehaviour
         PauseBtn = GameObject.Find("PauseBtn").GetComponent<Button>();
         pause_btn_script = PauseBtn.GetComponent<pause>();
         pause_btn_script.set_immobile(true);
-        PauseBtn.onClick.AddListener(() => 
+        PauseBtn.onClick.AddListener(() => // I'm not sure where to put this, so I'll just leave it here for now...
         {
-            print(pause_btn_script.immobile);
             if (!pause_btn_script.immobile)
             {
                 timer_script.toggle_pause();
+                for (int x = 0; x < cards.Count; x++)
+                {
+                    card card_script = cards[x].GetComponent<card>();
+                    card_script.set_immobile(timer_script.paused);
+                }
             }
         });
     }
