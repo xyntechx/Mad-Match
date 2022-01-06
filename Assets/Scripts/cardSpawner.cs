@@ -226,6 +226,7 @@ public class cardSpawner : MonoBehaviour
         int flag_switch = 0;
         float x_offset = 0f;
         float y_offset = 0f;
+        bool randomCards = false; // if it's SPEEDRUN mode, cards will be randomly shown...
 
         // different levels
         switch (lvl_num) {
@@ -236,7 +237,7 @@ public class cardSpawner : MonoBehaviour
                 x_offset = -5f;
                 y_offset = -1.25f;
                 break;
-            case 2: // a little bit long... can't really fit 7 pairs into neat rows
+            case 2: // a little bit long... can't really fit 7 pairs into neat rows, but it works.
                 cols = 7;
                 rows = 2;
                 flag_switch = 8;
@@ -381,6 +382,7 @@ public class cardSpawner : MonoBehaviour
             timer_script.destroy_addtime();
             timer_obj.SetActive(false);
             pause_btn_script.set_immobile(false);
+            DataController.unlock(lvl_num);
 
             gameover();
         }
