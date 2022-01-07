@@ -7,8 +7,7 @@ public static class DataController
     /*
     Controls data between scenes
         - Which level is loaded
-
-    Expanding this class to include the Leaderboard API
+        - Speedrun mode unlocked
     */
 
     public static int LevelSelected {

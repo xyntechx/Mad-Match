@@ -254,7 +254,7 @@ public class cardSpawner : MonoBehaviour
 		// sets the review panel to be inactive as it was previously active before leading to the score panel
 		reviewPanel.SetActive(!reviewPanel.activeSelf);
 		// sets the score panel to be active
-		if (PlayerPrefs.GetInt("lvl") > 5)
+		if (DataController.LevelSelected > 5)
 		{
 			// speedrun mode
 			PlayerPrefs.SetFloat("myScore", (float)get_gameover_score());
@@ -279,10 +279,15 @@ public class cardSpawner : MonoBehaviour
 		float y_offset = 0f;
 		bool randomCards = false; // if it's SPEEDRUN mode, cards will be randomly shown...
 
+		if (lvl_num > 5) {
+			randomCards = true;
+		}
+
 		// different levels
 		switch (lvl_num)
 		{
 			case 1:
+			case 6:
 				cols = 5;
 				rows = 2;
 				flag_switch = 6;
@@ -290,6 +295,7 @@ public class cardSpawner : MonoBehaviour
 				y_offset = -1.25f;
 				break;
 			case 2: // a little bit long... can't really fit 7 pairs into neat rows, but it works.
+			case 7:
 				cols = 7;
 				rows = 2;
 				flag_switch = 8;
@@ -297,6 +303,7 @@ public class cardSpawner : MonoBehaviour
 				y_offset = -1.25f;
 				break;
 			case 3:
+			case 8:
 				cols = 6;
 				rows = 3;
 				flag_switch = 10;
@@ -305,6 +312,8 @@ public class cardSpawner : MonoBehaviour
 				break;
 			case 4: // case 4 and 5 are the same (10 pairs)
 			case 5:
+			case 9:
+			case 10:
 				cols = 5;
 				rows = 4;
 				flag_switch = 11;
@@ -318,6 +327,8 @@ public class cardSpawner : MonoBehaviour
 
 		timer_script.set_time(20f);
 		int count = 0;
+		int spawn_id = 0; // card being spawned on that iteration
+		List<int> card_ids = new List<int>(); // accumulates a list of "image" card ids so their corresponding "text" cards can be spawned
 		bool flag = true;
 		for (int x = 0; x < cols; x++)
 		{
@@ -330,7 +341,24 @@ public class cardSpawner : MonoBehaviour
 					flag = false;
 					count = 1;
 				}
-				SpawnCard(count, flag, x_offset + x * 2.5f, y_offset + y * 2.5f);
+				if (!randomCards)
+				{
+					spawn_id = count;
+				} else 
+				{
+					if (flag) 
+					{
+						do 
+						{
+							spawn_id = UnityEngine.Random.Range(1, 11);
+						} while (card_ids.Contains(spawn_id));
+						card_ids.Add(spawn_id);
+					} else 
+					{
+						spawn_id = card_ids[count-1];
+					}
+				}
+				SpawnCard(spawn_id, flag, x_offset + x * 2.5f, y_offset + y * 2.5f);
 			}
 		}
 
@@ -513,21 +541,26 @@ public class cardSpawner : MonoBehaviour
 		switch (lvl_num)
 		{
 			case 1:
+			case 6:
 				break;
 			case 2:
+			case 7:
 				shuffles = 3;
 				max = 14;
 				break;
 			case 3:
+			case 8:
 				shuffles = 5;
 				max = 18;
 				break;
 			case 4:
+			case 9:
 				shuffles = 5;
 				max = 20;
 				memorise_time = 5f;
 				break;
 			case 5:
+			case 10:
 				shuffles = 7;
 				max = 20;
 				memorise_time = 5f;

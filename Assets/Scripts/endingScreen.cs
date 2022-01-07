@@ -37,7 +37,7 @@ public class endingScreen : MonoBehaviour
 		//PlayerPrefs.SetFloat("myScore", 4000f);
 		//PlayerPrefs.SetFloat("myHighscore", 1000f);
 		//PlayerPrefs.SetString("myID", "5555");
-		string slvl = PlayerPrefs.GetInt("lvl").ToString();
+		string slvl = DataController.LevelSelected.ToString();
 		LBGrid = GameObject.Find("LBGrid");
 		LBEntries = new List<LBEntry>();
 		StartCoroutine(GetRequest(HOST + "/api/jigsaw/getlb"
