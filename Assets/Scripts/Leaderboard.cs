@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Leaderboard : MonoBehaviour
 {
-    GameObject[] scores = new GameObject[3]; // change 3 to total number of scores shown
+    GameObject[] scores = new GameObject[9]; // change 3 to total number of scores shown
 
     void Awake()
     {
