@@ -22,5 +22,12 @@ public class SpeedRun : MonoBehaviour
     // Speedrunmode state toggler
     public void toggleSpeedrunMode() {
         setSpeedrunMode(!speedrunMode);
+        if (speedrunMode)
+		{
+            SpeedrunBtn.GetComponent<Button>().GetComponentInChildren<Text>().text = "Return to normal mode";
+        } else
+		{
+            SpeedrunBtn.GetComponent<Button>().GetComponentInChildren<Text>().text = "Speedrun Mode";
+        }
     }
 }
